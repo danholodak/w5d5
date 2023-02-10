@@ -6,28 +6,32 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-ActiveRecord::Base.transaction do
+ApplicationRecord.transaction do
+  puts "Preparing #{Rails.env} environment"
+
   # These `destroy_all` commands are not necessary if you use `rails
   # db:seed:replant`. If they are present when you run `db:seed:replant`,
   # however, the command will essentially just destroy the tables twice,
   # resulting in a small increase in execution time but no other ill effects.
-  puts "Destroying tables..."
-  Casting.destroy_all
+  puts 'Destroying tables...'
   Actor.destroy_all
   Movie.destroy_all
+  Casting.destroy_all
 
   # Reset the id (i.e., primary key) counters for each table to start at 1
   # (helpful for debugging)
-  puts "Resetting primary keys..."
+  puts 'Resetting id sequences...'
   %w(actors movies castings).each do |table_name|
     ApplicationRecord.connection.reset_pk_sequence!(table_name)
   end
 
+  # Load data
 	puts 'Loading actors...'
 	require_relative 'data/actors.rb'
 	puts 'Loading movies...'
 	require_relative 'data/movies.rb'
 	puts 'Loading castings...'
 	require_relative 'data/castings.rb'
-	puts "Done!"
+  
+	puts "Done with #{Rails.env} environment!"
 end
