@@ -8,11 +8,14 @@ end
 
 def bad_years
   # List the years in which no movie with a rating above 8 was released.
+  good_years = Movie.select(:yr)
+                    .group(:yr)
+                    .where("score > 8")
+
   Movie
-    # .select(:yr)
-    .where("yr NOT IN (:good_years)", good_years: Movie.select(:yr)
-    .group(:yr)
-    .where("score > 8")).distinct.pluck(:yr)
+    .where("yr NOT IN (?)", good_years)
+    .distinct
+    .pluck(:yr)
 end
 
 def cast_list(title)
