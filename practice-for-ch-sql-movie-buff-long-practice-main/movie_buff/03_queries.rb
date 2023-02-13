@@ -26,7 +26,10 @@ end
 def costars(name)
   # List the names of the actors that the named actor has ever appeared with.
   # Hint: use a subquery
-  subquery = Casting.select("castings.movie_id").joins(:actor).where("actors.name = (?)", name)
+  subquery = Casting
+              .select("castings.movie_id")
+              .joins(:actor)
+              .where("actors.name = (?)", name)
 
   Actor
     .joins(:castings)
